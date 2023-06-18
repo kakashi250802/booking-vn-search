@@ -23,7 +23,7 @@ export const searchSlice = createSlice({
     builder.addCase(SearchActions.GetList.fulfilled, (state, action) => {
       const { data, isSuccess } = action.payload;
       const {items: listData} = data;
-      const totalCount = data.searchInformation.totalResults;
+      const totalCount = data?.queries?.request[0]?.totalResults;
       state.listData = listData;
       state.totalCount = totalCount;
       state.isSuccess = isSuccess;
@@ -31,7 +31,7 @@ export const searchSlice = createSlice({
     builder.addCase(SearchActions.LoadMore.fulfilled, (state, action) => {
       const { data, isSuccess } = action.payload;
       const {items: listData} = data;
-      state.listData = [...state.listData,...listData];
+      state.listData = state.listData.concat(listData);
       state.isLoadMore = isSuccess;
     });
   }

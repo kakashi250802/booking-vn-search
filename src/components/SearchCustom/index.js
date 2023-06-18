@@ -48,71 +48,26 @@ const SearchBookingCare = (props) => {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const clientHeight = document.documentElement.clientHeight;
     const scrollHeight = document.documentElement.scrollHeight;
-
+  
     if (scrollTop + clientHeight >= scrollHeight - 20 && !loading && listData.length < totalCount) {
       const newQuery = {
         key: apiKey,
         cx: cxId,
         q: query,
         num_results: 20,
+        start: listData.length
       };
       dispatch(SearchActions.LoadMore(newQuery));
       setLoading(true);
     }
   };
-
+  
   useEffect(() => {
-    const list = document.getElementById('list');
-
-    if (props.scrollable) {
-      // list has fixed height
-      list.addEventListener('scroll', () => {
-        if (list.scrollTop + list.clientHeight === list.scrollHeight) {
-          setLoadMore(true);
-              const newQuery = {
-              key: apiKey,
-              cx: cxId,
-              q: query,
-              num_results: 20,
-            }; 
-          dispatch(SearchActions.LoadMore(newQuery))
-        }
-      });
-    } else {
-      // list has auto height
-      window.addEventListener('scroll', () => {
-        if (window.scrollY + window.innerHeight === list.clientHeight + list.offsetTop) {
-          setLoadMore(true);
-              const newQuery = {
-              key: apiKey,
-              cx: cxId,
-              q: query,
-              num_results: 20,
-            }; 
-          dispatch(SearchActions.LoadMore(newQuery))
-        }
-      });
-    }
-
+    window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-
-  useEffect(() => {
-    const list = document.getElementById('list');
-
-    if (list.clientHeight <= window.innerHeight && list.clientHeight) {
-      setLoadMore(true);
-          const newQuery = {
-              key: apiKey,
-              cx: cxId,
-              q: query,
-              num_results: 20,
-            }; 
-      dispatch(SearchActions.LoadMore(newQuery))
-    }
-  }, [props.state]);
 
   return (
     <div className='w-full flex flex-col justify-center'>
@@ -139,7 +94,7 @@ const SearchBookingCare = (props) => {
           ) : (
             <SkeletonCustom />
           )}
-          {loadMore && <SkeletonCustom />}
+          { !loading && loadMore && <SkeletonCustom />}
         </div>
       </div>
     </div>
