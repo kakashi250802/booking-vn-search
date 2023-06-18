@@ -1,0 +1,1 @@
+export const GetList = 'FETCH_LIST_SEARCH';

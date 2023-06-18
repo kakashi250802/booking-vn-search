@@ -2,10 +2,25 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { Provider } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
+import store from './store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <Provider store={store}>
     <App />
-  </React.StrictMode>
+    <ToastContainer
+      limit={1}
+      position="top-center"
+      autoClose={2000}
+      hideProgressBar
+      newestOnTop={true}
+      closeOnClick
+      rtl={false}
+      draggable
+      pauseOnHover
+      theme="light"
+    />
+  </Provider>
 );
