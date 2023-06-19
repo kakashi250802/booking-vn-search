@@ -19,14 +19,14 @@ const SearchBookingCare = (props) => {
   const [loadMore, setLoadMore] = useState(false);
 
   useEffect(() => {
-    if (isSuccess || isLoadMore) {
+    if ( isSuccess || isLoadMore) {
       setLoading(false);
       setLoadMore(false);
-      if(listData?.length || 0 <20){
+      if(!isEmpty(listData) && (listData?.length || 0 <20 )&& (listData?.length || 0 <totalCount)){
         handleLoadMore()
       }
     }
-  }, [isSuccess, isLoadMore]);
+  }, [isSuccess, isLoadMore, listData]);
 
   const search = async () => {
     const newQuery = {
