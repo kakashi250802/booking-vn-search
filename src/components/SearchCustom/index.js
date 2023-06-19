@@ -17,11 +17,16 @@ const SearchBookingCare = (props) => {
   const { listData, isLoadMore, isSuccess, totalCount } = useSelector((state) => state.search);
   const [loading, setLoading] = useState(false);
   const [loadMore, setLoadMore] = useState(false);
+  const [totalResut, setTotalResut] = useState(0);
 
   useEffect(() => {
     if (isSuccess || isLoadMore) {
       setLoading(false);
       setLoadMore(false);
+      listData?.length && setTotalResut(listData?.length)
+      if(totalResut<20){
+        handleLoadMore()
+      }
     }
   }, [isSuccess, isLoadMore]);
 
@@ -48,12 +53,11 @@ const SearchBookingCare = (props) => {
   };
 
   const handleLoadMore = () => {
-    const startAt = listData.length;
     const newQuery = {
       key: apiKey,
       cx: cxId,
       q: query,
-      start: startAt,
+      start_at: totalResut,
     };
     dispatch(SearchActions.LoadMore(newQuery));
     setLoadMore(true);
@@ -78,9 +82,9 @@ const SearchBookingCare = (props) => {
       <div className='flex justify-center pb-8'>
         <div className='px-[120px]' id='list'>
           <InfiniteScroll
-            dataLength={listData.length}
+            dataLength={totalResut}
             next={handleLoadMore}
-            hasMore={listData.length < totalCount && loadMore}
+            hasMore={totalResut < totalCount}
             loader={<SkeletonCustom />}
             endMessage={<div className='mt-28 text-base font-medium'>Không có kết quả nào!</div>}
           >

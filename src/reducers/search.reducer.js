@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { SearchActions } from "../actions";
+import { isEmpty } from "lodash";
 
 export const searchSlice = createSlice({
   name: 'search',
@@ -31,7 +32,9 @@ export const searchSlice = createSlice({
     builder.addCase(SearchActions.LoadMore.fulfilled, (state, action) => {
       const { data, isSuccess } = action.payload;
       const {items: listData} = data;
-      state.listData = state.listData.concat(listData);
+      if(!isEmpty(listData)){
+        state.listData = state.listData.concat(listData);
+      }
       state.isLoadMore = isSuccess;
     });
   }
