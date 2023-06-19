@@ -11,7 +11,16 @@ const _responseConfig = async (response) => {
     if (status !== 404 || status !== 400  || status !== 429 || status !== 500) return {...responseData,status:200};
     const errorObj = responseData.errors ? responseData.errors[0] : {};
     const message = errorObj.error ?? 'Server error';
-    toast.error(message,3000);
+    toast.error(message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      });
     throw Error(message);
   } catch (error) {
     throw Error(error?.message || 'Server error');
@@ -36,7 +45,16 @@ const getService = async (params, body) => {
     const response = await fetch(`${HOST}${stringifyParams} site:bookingcare.vn`, requestInit);
     return await _responseConfig(response);
   } catch (error) {
-    toast.e(error.message,3000);
+    toast.error(error.message, {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      });
     return {error: true};
   }
 };
