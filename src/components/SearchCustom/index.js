@@ -6,6 +6,7 @@ import InputCustom from '../InputCustom';
 import CardCustom from '../CardCustom';
 import { IconSearch } from '../../assets/icons';
 import SkeletonCustom from '../SkeletonCustom';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const SearchBookingCare = (props) => {
   const [query, setQuery] = useState('');
@@ -41,33 +42,22 @@ const SearchBookingCare = (props) => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    search();
-  };
-
-  const handleScroll = () => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const clientHeight = document.documentElement.clientHeight;
-    const scrollHeight = document.documentElement.scrollHeight;
-  
-    if (scrollTop + clientHeight >= scrollHeight - 20 && !loading && listData.length < totalCount) {
-      const newQuery = {
-        key: apiKey,
-        cx: cxId,
-        q: query,
-        num_results: 20,
-        start: listData.length
-      };
-      dispatch(SearchActions.LoadMore(newQuery));
-      setLoading(true);
+    if (!isEmpty(query.trim())) {
+      search();
     }
   };
-  
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
+
+  const handleLoadMore = () => {
+    const startAt = listData.length;
+    const newQuery = {
+      key: apiKey,
+      cx: cxId,
+      q: query,
+      start: startAt,
     };
-  }, []);
+    dispatch(SearchActions.LoadMore(newQuery));
+    setLoadMore(true);
+  };
 
   return (
     <div className='w-full flex flex-col justify-center'>
@@ -86,15 +76,18 @@ const SearchBookingCare = (props) => {
       </form>
 
       <div className='flex justify-center pb-8'>
-        <div className='px-[120px]'  id='list'>
-          {!isEmpty(listData) ? (
-            listData.map((item) => <CardCustom key={item.id} item={item} />)
-          ) : !loading ? (
-            <div className='mt-28 text-base font-medium'>Không có kết quả nào!</div>
-          ) : (
-            <SkeletonCustom />
-          )}
-          { !loading && loadMore && <SkeletonCustom />}
+        <div className='px-[120px]' id='list'>
+          <InfiniteScroll
+            dataLength={listData.length}
+            next={handleLoadMore}
+            hasMore={listData.length < totalCount && loadMore}
+            loader={<SkeletonCustom />}
+            endMessage={<div className='mt-28 text-base font-medium'>Không có kết quả nào!</div>}
+          >
+            {!isEmpty(listData) && (
+              listData.map((item) => <CardCustom key={item.id} item={item} />)
+            )}
+          </InfiniteScroll>
         </div>
       </div>
     </div>
