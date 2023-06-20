@@ -22,9 +22,6 @@ const SearchBookingCare = (props) => {
     if ( isSuccess || isLoadMore) {
       setLoading(false);
       setLoadMore(false);
-      if(!isEmpty(listData) && (listData?.length || 0 <20 )&& (listData?.length || 0 <totalCount)){
-        handleLoadMore()
-      }
     }
   }, [isSuccess, isLoadMore, listData]);
 
@@ -36,6 +33,7 @@ const SearchBookingCare = (props) => {
       num_results: 20,
     };
     dispatch(SearchActions.GetList(newQuery));
+    handleLoadMore(10);
     setLoading(true);
   };
 
@@ -50,8 +48,8 @@ const SearchBookingCare = (props) => {
     }
   };
 
-  const handleLoadMore = () => {
-    const startAt = listData?.length || 0;
+  const handleLoadMore = (numberStart) => {
+    const startAt = listData?.length || numberStart;
     const newQuery = {
       key: apiKey,
       cx: cxId,
