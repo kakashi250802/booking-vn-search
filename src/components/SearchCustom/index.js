@@ -4,7 +4,7 @@ import { SearchActions } from '../../actions';
 import { isEmpty } from 'lodash';
 import InputCustom from '../InputCustom';
 import CardCustom from '../CardCustom';
-import { IconSearch } from '../../assets/icons';
+import { IconLogo, IconSearch } from '../../assets/icons';
 import SkeletonCustom from '../SkeletonCustom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
@@ -17,12 +17,14 @@ const SearchBookingCare = (props) => {
   const { listData, isLoadMore, isSuccess, totalCount } = useSelector((state) => state.search);
   const [loading, setLoading] = useState(false);
   const [loadMore, setLoadMore] = useState(false);
+  const [showEndMessage, setShowEndMessage] = useState(false);
 
   useEffect(() => {
     if ( isSuccess || isLoadMore) {
       setLoading(false);
       setLoadMore(false);
     }
+
   }, [isSuccess, isLoadMore, listData]);
 
   const search = async () => {
@@ -32,8 +34,8 @@ const SearchBookingCare = (props) => {
       q: query,
       num_results: 20,
     };
-    dispatch(SearchActions.GetList(newQuery));
-    handleLoadMore(10);
+    await dispatch(SearchActions.GetList(newQuery));
+    await handleLoadMore(10);
     setLoading(true);
   };
 
@@ -45,6 +47,7 @@ const SearchBookingCare = (props) => {
     event.preventDefault();
     if (!isEmpty(query.trim())) {
       search();
+      setShowEndMessage(true)
     }
   };
 
@@ -62,10 +65,12 @@ const SearchBookingCare = (props) => {
 
   return (
     <div className='w-full flex flex-col justify-center'>
-      <h1 className='text-center w-full'>Search BookingCare.vn</h1>
 
-      <form onSubmit={handleFormSubmit} className='flex justify-center items-center mb-3'>
-        <div className='w-[500px]'>
+      <form onSubmit={handleFormSubmit} className='flex justify-center items-center mb-3 fixed top-0 left-0 right-0 w-screen py-3 bg-white'>
+        <div className='w-[170px]'>
+          <IconLogo />
+        </div>
+        <div className='w-[500px] ml-3'>
           <InputCustom value={query} handleInputChange={handleInputChange} />
         </div>
         <button type='submit' className='bg-cyan-400 py-2 px-4 rounded-xl ml-2'>
@@ -76,14 +81,14 @@ const SearchBookingCare = (props) => {
         </button>
       </form>
 
-      <div className='flex justify-center pb-8'>
+      <div className='flex justify-center pb-8 mt-24'>
         <div className='px-[120px]' id='list'>
           <InfiniteScroll
             dataLength={listData?.length || 0}
             next={handleLoadMore}
             hasMore={listData?.length || 0 < totalCount}
             loader={<SkeletonCustom />}
-            endMessage={<div className='mt-28 text-base font-medium'>Không có kết quả nào!</div>}
+            endMessage={showEndMessage && (<div className='mt-28 text-base font-medium'>Không có kết quả nào!</div>)}
           >
             {!isEmpty(listData) && (
               listData.map((item) => <CardCustom key={item.id} item={item} />)
